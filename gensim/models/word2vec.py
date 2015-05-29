@@ -399,7 +399,7 @@ class Word2Vec(utils.SaveLoad):
         # assign a unique index to each word
         self.vocab, self.index2word = {}, []
         for word, v in iteritems(vocab):
-            if v.count >= self.min_count:
+            if (v.count >= self.min_count) or (word.startswith("DBPEDIA_ID")):
                 v.index = len(self.vocab)
                 self.index2word.append(word)
                 self.vocab[word] = v
