@@ -222,7 +222,9 @@ def train_cbow_pair(model, word, word2_indices, l1, alpha, labels, train_w1=True
 
 
 class Vocab(object):
-    """A single vocabulary item, used internally for constructing binary trees (incl. both word leaves and inner nodes)."""
+    """
+    A single vocabulary item, used internally for constructing binary trees (incl. both word leaves and inner nodes).
+    """
     def __init__(self, **kwargs):
         self.count = 0
         self.__dict__.update(kwargs)
@@ -234,6 +236,7 @@ class Vocab(object):
         vals = ['%s:%r' % (key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
         return "<" + ', '.join(vals) + ">"
 
+
 def prune_vocab(vocab, min_reduce):
     """
     Remove all entries from the `vocab` dictionary with count smaller than `min_reduce`.
@@ -241,10 +244,12 @@ def prune_vocab(vocab, min_reduce):
     """
     old_len = len(vocab)
     for w in list(vocab):  # make a copy of dict's keys
-        if vocab[w] <= min_reduce:
-            del vocab[w]
+        if vocab[w].count <= min_reduce:
+            if not w.startswith("DBPEDIA_ID/"):  # never delete entities
+                del vocab[w]
     logger.info("pruned out %i tokens with count <=%i (before %i, after %i)" %
-        (old_len - len(vocab), min_reduce, old_len, len(vocab)))
+               (old_len - len(vocab), min_reduce, old_len, len(vocab)))
+
 
 class Word2Vec(utils.SaveLoad):
     """
