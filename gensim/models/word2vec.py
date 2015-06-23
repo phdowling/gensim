@@ -234,6 +234,17 @@ class Vocab(object):
         vals = ['%s:%r' % (key, self.__dict__[key]) for key in sorted(self.__dict__) if not key.startswith('_')]
         return "<" + ', '.join(vals) + ">"
 
+def prune_vocab(vocab, min_reduce):
+    """
+    Remove all entries from the `vocab` dictionary with count smaller than `min_reduce`.
+    Modifies `vocab` in place.
+    """
+    old_len = len(vocab)
+    for w in list(vocab):  # make a copy of dict's keys
+        if vocab[w] <= min_reduce:
+            del vocab[w]
+    logger.info("pruned out %i tokens with count <=%i (before %i, after %i)" %
+        (old_len - len(vocab), min_reduce, old_len, len(vocab)))
 
 class Word2Vec(utils.SaveLoad):
     """
@@ -416,9 +427,10 @@ class Word2Vec(utils.SaveLoad):
         self.reset_weights()
 
     @staticmethod
-    def _vocab_from(sentences):
+    def _vocab_from(sentences, max_vocab_size=20*10**6):
         sentence_no, vocab = -1, {}
         total_words = 0
+        min_reduce = 1
         for sentence_no, sentence in enumerate(sentences):
             if sentence_no % 10000 == 0:
                 logger.info("PROGRESS: at sentence #%i, processed %i words and %i word types" %
@@ -429,6 +441,11 @@ class Word2Vec(utils.SaveLoad):
                     vocab[word].count += 1
                 else:
                     vocab[word] = Vocab(count=1)
+
+            if len(vocab) > max_vocab_size:
+                prune_vocab(vocab, min_reduce)
+                min_reduce += 1
+
         logger.info("collected %i word types from a corpus of %i words and %i sentences" %
                     (len(vocab), total_words, sentence_no + 1))
         return vocab
