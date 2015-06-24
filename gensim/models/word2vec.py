@@ -432,7 +432,7 @@ class Word2Vec(utils.SaveLoad):
         self.reset_weights()
 
     @staticmethod
-    def _vocab_from(sentences, max_vocab_size=3.0*10**7):
+    def _vocab_from(sentences, max_vocab_size=2.5*10**7):
         sentence_no, vocab = -1, {}
         total_words = 0
         min_reduce = 1
