@@ -394,7 +394,7 @@ class Word2Vec(utils.SaveLoad):
 
             logger.info("built huffman tree with maximum node depth %i" % max_depth)
 
-    def precalc_sampling(self):
+    def  precalc_sampling(self):
         """Precalculate each vocabulary item's threshold for sampling"""
         if self.sample:
             logger.info("frequent-word downsampling, threshold %g; progress tallies will be approximate" % (self.sample))
@@ -432,7 +432,7 @@ class Word2Vec(utils.SaveLoad):
         self.reset_weights()
 
     @staticmethod
-    def _vocab_from(sentences, max_vocab_size=20*10**6):
+    def _vocab_from(sentences, max_vocab_size=3.0*10**7):
         sentence_no, vocab = -1, {}
         total_words = 0
         min_reduce = 1
