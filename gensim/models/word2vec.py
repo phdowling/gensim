@@ -90,7 +90,7 @@ from gensim import utils, matutils  # utility fnc for pickling, common scipy ope
 from six import iteritems, itervalues, string_types
 from six.moves import xrange
 from types import GeneratorType
-
+from collections import defaultdict
 
 try:
     from gensim.models.word2vec_inner import train_sentence_sg, train_sentence_cbow, FAST_VERSION
@@ -414,11 +414,25 @@ class Word2Vec(utils.SaveLoad):
         vocab = self._vocab_from(sentences)
         # assign a unique index to each word
         self.vocab, self.index2word = {}, []
+        overall_counts = defaultdict(int)
+        entity_counts = defaultdict(int)
         for word, v in iteritems(vocab):
-            if (v.count >= self.min_count) or (word.startswith("DBPEDIA_ID")):
+            is_entity = word.startswith("DBPEDIA_ID")
+
+            if is_entity:
+                entity_counts[v.count] += 1
+            else:
+                overall_counts[v.count] += 1
+
+            if (v.count >= self.min_count) or is_entity:
                 v.index = len(self.vocab)
                 self.index2word.append(word)
                 self.vocab[word] = v
+        logger.debug("word frequencies (count -> freq): %s" % dict(overall_counts))
+        logger.debug("total non-entity words: %s" % sum(dict(overall_counts.values())))
+        logger.debug("entity frequencies (count -> freq): %s" % dict(entity_counts))
+        logger.debug("total entities: %s" % sum(dict(entity_counts.values())))
+
         logger.info("total %i word types after removing those with count<%s" % (len(self.vocab), self.min_count))
 
         if self.hs:
