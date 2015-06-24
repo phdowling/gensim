@@ -410,7 +410,7 @@ class Word2Vec(utils.SaveLoad):
         Each sentence must be a list of unicode strings.
 
         """
-        logger.info("collecting all words and their counts")
+        logger.info("collecting all words and their counts, early pruning is enabled, DBPEDIA entites will be kept.")
         vocab = self._vocab_from(sentences)
         # assign a unique index to each word
         self.vocab, self.index2word = {}, []
