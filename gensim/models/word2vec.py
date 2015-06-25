@@ -429,9 +429,9 @@ class Word2Vec(utils.SaveLoad):
                 self.index2word.append(word)
                 self.vocab[word] = v
         logger.debug("word frequencies (count -> freq): %s" % dict(overall_counts))
-        logger.debug("total non-entity words: %s" % sum(dict(overall_counts.values())))
+        logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
         logger.debug("entity frequencies (count -> freq): %s" % dict(entity_counts))
-        logger.debug("total entities: %s" % sum(dict(entity_counts.values())))
+        logger.debug("total entities: %s" % sum(dict(entity_counts).values()))
 
         logger.info("total %i word types after removing those with count<%s" % (len(self.vocab), self.min_count))
 
