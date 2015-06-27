@@ -86,6 +86,7 @@ from numpy import exp, dot, zeros, outer, random, dtype, float32 as REAL,\
 logger = logging.getLogger("gensim.models.word2vec")
 
 
+
 from gensim import utils, matutils  # utility fnc for pickling, common scipy operations etc
 from six import iteritems, itervalues, string_types
 from six.moves import xrange
@@ -261,7 +262,7 @@ class Word2Vec(utils.SaveLoad):
     """
     def __init__(self, sentences=None, size=100, alpha=0.025, window=5, min_count=5,
         sample=0, seed=1, workers=1, min_alpha=0.0001, sg=1, hs=1, negative=0,
-        cbow_mean=0, hashfxn=hash, iter=1):
+        cbow_mean=0, hashfxn=hash, iter=1, entity_min_count=5):
         """
         Initialize the model from an iterable of `sentences`. Each sentence is a
         list of words (unicode strings) that will be used for training.
@@ -317,6 +318,7 @@ class Word2Vec(utils.SaveLoad):
         self.window = int(window)
         self.seed = seed
         self.min_count = min_count
+        self.entity_min_count = entity_min_count
         self.sample = sample
         self.workers = workers
         self.min_alpha = min_alpha
@@ -424,10 +426,11 @@ class Word2Vec(utils.SaveLoad):
             else:
                 overall_counts[v.count] += 1
 
-            if (v.count >= self.min_count) or is_entity:
+            if (v.count >= self.min_count) or (is_entity and v.count >= self.entity_min_count):
                 v.index = len(self.vocab)
                 self.index2word.append(word)
                 self.vocab[word] = v
+
         logger.debug("word frequencies (count -> freq): %s" % dict(overall_counts))
         logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
         logger.debug("entity frequencies (count -> freq): %s" % dict(entity_counts))
