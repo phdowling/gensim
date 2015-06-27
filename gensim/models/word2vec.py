@@ -412,7 +412,8 @@ class Word2Vec(utils.SaveLoad):
         Each sentence must be a list of unicode strings.
 
         """
-        logger.info("collecting all words and their counts, early pruning is enabled, DBPEDIA entites will be kept.")
+        logger.info("collecting all words and their counts, early pruning is enabled, "
+                    "DBPEDIA entites will be kept with a min count of %s." % self.entity_min_count)
         vocab = self._vocab_from(sentences)
         # assign a unique index to each word
         self.vocab, self.index2word = {}, []
@@ -431,12 +432,14 @@ class Word2Vec(utils.SaveLoad):
                 self.index2word.append(word)
                 self.vocab[word] = v
 
-        logger.debug("word frequencies (count -> freq): %s" % dict(overall_counts))
         logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
-        logger.debug("entity frequencies (count -> freq): %s" % dict(entity_counts))
         logger.debug("total entities: %s" % sum(dict(entity_counts).values()))
 
-        logger.info("total %i word types after removing those with count<%s" % (len(self.vocab), self.min_count))
+        logger.info(
+            "total %i word types after removing those with count<%s (%s for entities)" % (len(self.vocab),
+                                                                                          self.min_count,
+                                                                                          self.entity_min_count)
+        )
 
         if self.hs:
             # add info about each word's Huffman encoding
@@ -465,6 +468,7 @@ class Word2Vec(utils.SaveLoad):
                     vocab[word] = Vocab(count=1)
 
             if len(vocab) > max_vocab_size:
+                logger.debug("Pruning vocab to preserve memory (entities will not be pruned yet).")
                 prune_vocab(vocab, min_reduce)
                 min_reduce += 1
 
