@@ -445,6 +445,9 @@ class Word2Vec(utils.SaveLoad):
                                                                                           self.entity_min_count)
         )
 
+        # right away, delete the part of the vocab we no longer need
+        del vocab
+
         if self.hs:
             # add info about each word's Huffman encoding
             self.create_binary_tree()
