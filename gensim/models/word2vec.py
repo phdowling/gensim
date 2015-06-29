@@ -92,7 +92,6 @@ from six import iteritems, itervalues, string_types
 from six.moves import xrange
 from types import GeneratorType
 from collections import defaultdict
-import gc
 
 try:
     from gensim.models.word2vec_inner import train_sentence_sg, train_sentence_cbow, FAST_VERSION
@@ -434,7 +433,6 @@ class Word2Vec(utils.SaveLoad):
                 self.vocab[word] = v
 
         del vocab
-        gc.collect()
 
         logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
         logger.debug("total entities: %s" % sum(dict(entity_counts).values()))
