@@ -432,8 +432,6 @@ class Word2Vec(utils.SaveLoad):
                 self.index2word.append(word)
                 self.vocab[word] = v
 
-        del vocab
-
         logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
         logger.debug("total entities: %s" % sum(dict(entity_counts).values()))
 
@@ -443,7 +441,11 @@ class Word2Vec(utils.SaveLoad):
                                                                                           self.entity_min_count)
         )
 
-        # right away, delete the part of the vocab we no longer need
+        # these are now unnecessary
+        del overall_counts
+        del entity_counts
+
+        # delete the unpruned vocab, we no longer need it and it takes up lots of memory
         del vocab
 
         if self.hs:
