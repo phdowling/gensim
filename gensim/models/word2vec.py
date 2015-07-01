@@ -415,7 +415,7 @@ class Word2Vec(utils.SaveLoad):
 
         logger.info("collecting all words and their counts, early pruning is enabled, "
                     "DBPEDIA entites will be kept with a min count of %s." % self.entity_min_count)
-        vocab = self._vocab_from(sentences)
+        
         # assign a unique index to each word
         self.index2word = []
         vocab = list(self._vocab_from(sentences).items())
