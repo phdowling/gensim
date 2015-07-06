@@ -415,7 +415,7 @@ class Word2Vec(utils.SaveLoad):
 
         logger.info("collecting all words and their counts, early pruning is enabled, "
                     "DBPEDIA entites will be kept with a min count of %s." % self.entity_min_count)
-        
+
         # assign a unique index to each word
         self.index2word = []
         vocab = list(self._vocab_from(sentences).items())
@@ -435,7 +435,6 @@ class Word2Vec(utils.SaveLoad):
                 entity_counts[v.count] += 1
             else:
                 overall_counts[v.count] += 1
-
 
         logger.debug("total non-entity words: %s" % sum(dict(overall_counts).values()))
         logger.debug("total entities: %s" % sum(dict(entity_counts).values()))
